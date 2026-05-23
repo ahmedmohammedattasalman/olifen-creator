@@ -15,6 +15,7 @@ import { PricingCard, type Plan } from "@/components/olifen/PricingCard";
 import { TestimonialCarousel } from "@/components/olifen/TestimonialCarousel";
 import { FAQAccordion } from "@/components/olifen/FAQAccordion";
 import { InfographicPreview } from "@/components/olifen/InfographicPreview";
+import IntroOverlay from "@/components/olifen/IntroOverlay";
 
 export const Route = createFileRoute("/")({
   component: Landing,
