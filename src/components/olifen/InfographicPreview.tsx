@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { AnimatePresence, motion } from "framer-motion";
 import { BookOpen, Type, Sparkles, FileText, Check } from "lucide-react";
+import sampleHijra from "@/assets/sample-hijra.png";
 
 interface Props {
   loading?: boolean;
@@ -8,13 +9,7 @@ interface Props {
 }
 
 const SUBJECTS = ["تاريخ", "علوم", "رياضيات", "جغرافيا"];
-const LESSON = "الحضارة الإسلامية";
-const RESULT_BULLETS = [
-  { t: "٦٢٢ م", s: "بداية الهجرة النبوية" },
-  { t: "بيت الحكمة", s: "أعظم مكتبة في بغداد" },
-  { t: "+١٠٠", s: "عالم مسلم بارز" },
-  { t: "٧٥٠ م", s: "بداية العصر العباسي" },
-];
+const LESSON = "الهجرة النبوية";
 
 const STEPS = [
   { n: "١", title: "اختر المادة", icon: BookOpen, color: "var(--cyan)" },
@@ -257,27 +252,24 @@ function ResultStep() {
   return (
     <motion.div {...stepWrap} className="h-full flex flex-col">
       <StepLabel>الخطوة الرابعة — إنفوجرافيكك</StepLabel>
-      <div className="font-display text-xl font-black text-gradient-gold leading-tight mb-3">
-        {LESSON}
-      </div>
-      <div className="grid grid-cols-2 gap-2 flex-1">
-        {RESULT_BULLETS.map((b, i) => (
-          <motion.div
-            key={i}
-            initial={{ opacity: 0, y: 12 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.15 + i * 0.12 }}
-            className="rounded-xl bg-gradient-to-br from-white/5 to-white/[0.02] border border-white/10 p-2.5 flex flex-col justify-center"
-          >
-            <div className="font-display text-sm font-black text-[var(--gold)] leading-tight">
-              {b.t}
-            </div>
-            <div className="text-[10px] text-muted-foreground leading-tight mt-0.5">
-              {b.s}
-            </div>
-          </motion.div>
-        ))}
-      </div>
+      <motion.div
+        initial={{ opacity: 0, scale: 0.92, y: 20 }}
+        animate={{ opacity: 1, scale: 1, y: 0 }}
+        transition={{ duration: 0.7, ease: [0.16, 1, 0.3, 1] }}
+        className="relative flex-1 rounded-xl overflow-hidden border border-[var(--gold)]/30 bg-black/40 shadow-[0_20px_60px_-20px_rgba(0,0,0,0.6)]"
+      >
+        <img
+          src={sampleHijra}
+          alt="الهجرة النبوية — إنفوجرافيك"
+          className="absolute inset-0 w-full h-full object-cover object-top"
+        />
+        <motion.div
+          initial={{ y: "-100%" }}
+          animate={{ y: "100%" }}
+          transition={{ duration: 2.2, ease: "linear", delay: 0.3 }}
+          className="absolute inset-x-0 h-1/3 bg-gradient-to-b from-transparent via-[var(--gold)]/20 to-transparent pointer-events-none"
+        />
+      </motion.div>
     </motion.div>
   );
 }
