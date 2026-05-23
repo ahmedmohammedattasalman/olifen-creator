@@ -37,8 +37,8 @@
   --color-violet: var(--violet);
   --color-cyan: var(--cyan);
 
-  --font-display: 'Tajawal', 'Cairo', sans-serif;
-  --font-body: 'Cairo', 'Tajawal', sans-serif;
+  --font-display: 'Reem Kufi', 'IBM Plex Sans Arabic', sans-serif;
+  --font-body: 'IBM Plex Sans Arabic', 'Reem Kufi', sans-serif;
 }
 
 :root {
