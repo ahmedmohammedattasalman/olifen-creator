@@ -79,6 +79,7 @@ function Landing() {
 
   return (
     <main className="bg-background text-foreground">
+      <IntroOverlay />
       <Navbar />
 
       {/* ───────── HERO ───────── */}
