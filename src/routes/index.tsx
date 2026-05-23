@@ -62,11 +62,13 @@ function useTypewriter() {
   return text;
 }
 
-const container = {
+import type { Variants } from "framer-motion";
+
+const container: Variants = {
   hidden: {},
   show: { transition: { staggerChildren: 0.12 } },
 };
-const item = {
+const item: Variants = {
   hidden: { opacity: 0, y: 40 },
   show: { opacity: 1, y: 0, transition: { duration: 0.6, ease: [0.16, 1, 0.3, 1] } },
 };
