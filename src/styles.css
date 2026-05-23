@@ -37,8 +37,8 @@
   --color-violet: var(--violet);
   --color-cyan: var(--cyan);
 
-  --font-display: 'Tajawal', 'Cairo', sans-serif;
-  --font-body: 'Cairo', 'Tajawal', sans-serif;
+  --font-display: 'Reem Kufi', 'IBM Plex Sans Arabic', sans-serif;
+  --font-body: 'IBM Plex Sans Arabic', 'Reem Kufi', sans-serif;
 }
 
 :root {
@@ -86,7 +86,7 @@
     -webkit-font-smoothing: antialiased;
     overflow-x: hidden;
   }
-  h1, h2, h3, h4 { font-family: var(--font-display); font-weight: 900; letter-spacing: -0.02em; }
+  h1, h2, h3, h4 { font-family: var(--font-display); font-weight: 700; letter-spacing: -0.01em; }
   ::selection { background: var(--gold); color: #07060f; }
 }
 
