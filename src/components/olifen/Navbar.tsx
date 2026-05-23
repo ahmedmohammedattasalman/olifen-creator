@@ -22,7 +22,7 @@ export function Navbar() {
     <motion.header
       initial={{ y: -40, opacity: 0 }}
       animate={{ y: 0, opacity: 1 }}
-      transition={{ duration: 0.6, ease: "easeOut" }}
+      transition={{ duration: 0.6, ease: [0.16, 1, 0.3, 1] }}
       className={`fixed top-0 inset-x-0 z-50 transition-all duration-300 ${
         scrolled ? "backdrop-blur-xl bg-background/70 border-b border-border" : "bg-transparent"
       }`}

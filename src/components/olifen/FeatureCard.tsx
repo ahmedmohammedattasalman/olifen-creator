@@ -19,7 +19,7 @@ export function FeatureCard({ icon: Icon, title, desc, accent = "gold" }: Props)
     <motion.div
       variants={{
         hidden: { opacity: 0, y: 40 },
-        show: { opacity: 1, y: 0, transition: { duration: 0.6, ease: "easeOut" } },
+        show: { opacity: 1, y: 0, transition: { duration: 0.6, ease: [0.16, 1, 0.3, 1] } },
       }}
       whileHover={{ y: -4, scale: 1.02 }}
       className="group relative rounded-2xl glass p-7 transition-shadow hover:shadow-[0_0_0_1px_rgba(200,169,126,0.4),0_20px_60px_-20px_rgba(200,169,126,0.35)]"
