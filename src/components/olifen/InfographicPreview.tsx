@@ -46,7 +46,7 @@ export function InfographicPreview({ loading, result }: Props) {
       />
       <motion.div
         animate={{ y: [0, -18, 0] }}
-        transition={{ duration: 3.5, repeat: Infinity, ease: "easeInOut" }}
+        transition={{ duration: 3.5, repeat: Infinity, ease: [0.45, 0, 0.55, 1] }}
         className="relative rounded-3xl glass p-7 aspect-[3/4] flex flex-col"
       >
         <div className="flex items-center justify-between text-xs text-muted-foreground mb-4">
