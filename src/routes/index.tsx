@@ -15,6 +15,7 @@ import { PricingCard, type Plan } from "@/components/olifen/PricingCard";
 import { TestimonialCarousel } from "@/components/olifen/TestimonialCarousel";
 import { FAQAccordion } from "@/components/olifen/FAQAccordion";
 import { InfographicPreview } from "@/components/olifen/InfographicPreview";
+import { SamplesGallery } from "@/components/olifen/SamplesGallery";
 import IntroOverlay from "@/components/olifen/IntroOverlay";
 
 export const Route = createFileRoute("/")({
@@ -189,6 +190,13 @@ function Landing() {
           <FeatureCard icon={InfinityIcon} accent="cyan" title="غير محدود في خطة Pro" desc="ولّد كل ما تحتاجه، بدون قيود يومية أو شهرية على الإنفوجرافيكات." />
         </motion.div>
       </Section>
+
+      {/* ───────── SAMPLES ───────── */}
+      <Section id="samples" eyebrow="أعمال حقيقية" title="نماذج من إنفوجرافيكات Olifen">
+        <SamplesGallery />
+      </Section>
+
+
 
       {/* ───────── LIVE DEMO ───────── */}
       <Section id="demo" eyebrow="جرّبها الآن" title="ولّد نموذجك الأول مجاناً">
