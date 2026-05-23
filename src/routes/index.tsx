@@ -15,7 +15,6 @@ import { PricingCard, type Plan } from "@/components/olifen/PricingCard";
 import { TestimonialCarousel } from "@/components/olifen/TestimonialCarousel";
 import { FAQAccordion } from "@/components/olifen/FAQAccordion";
 import { InfographicPreview } from "@/components/olifen/InfographicPreview";
-import { SamplesGallery } from "@/components/olifen/SamplesGallery";
 import IntroOverlay from "@/components/olifen/IntroOverlay";
 
 export const Route = createFileRoute("/")({
@@ -199,11 +198,6 @@ function Landing() {
             <InfographicPreview />
           </div>
         </div>
-      </Section>
-
-      {/* ───────── SAMPLES ───────── */}
-      <Section id="samples" eyebrow="نماذج حقيقية" title="إنفوجرافيكات وُلِّدت بواسطة Olifen">
-        <SamplesGallery />
       </Section>
 
       {/* ───────── STATS ───────── */}
