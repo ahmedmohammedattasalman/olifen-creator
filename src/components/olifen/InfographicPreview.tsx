@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { AnimatePresence, motion } from "framer-motion";
 import { BookOpen, Type, Sparkles, FileText, Check } from "lucide-react";
+import sampleHijra from "@/assets/sample-hijra.png";
 
 interface Props {
   loading?: boolean;
@@ -8,13 +9,7 @@ interface Props {
 }
 
 const SUBJECTS = ["تاريخ", "علوم", "رياضيات", "جغرافيا"];
-const LESSON = "الحضارة الإسلامية";
-const RESULT_BULLETS = [
-  { t: "٦٢٢ م", s: "بداية الهجرة النبوية" },
-  { t: "بيت الحكمة", s: "أعظم مكتبة في بغداد" },
-  { t: "+١٠٠", s: "عالم مسلم بارز" },
-  { t: "٧٥٠ م", s: "بداية العصر العباسي" },
-];
+const LESSON = "الهجرة النبوية";
 
 const STEPS = [
   { n: "١", title: "اختر المادة", icon: BookOpen, color: "var(--cyan)" },
