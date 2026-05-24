@@ -21,9 +21,6 @@ export const Route = createFileRoute("/generate")({
 });
 
 const SUBJECTS = ["تاريخ", "جغرافيا", "علوم", "رياضيات", "لغة عربية", "تربية إسلامية", "لغة إنجليزية"];
-const GRADES = Array.from({ length: 12 }).map((_, i) =>
-  `الصف ${["الأول","الثاني","الثالث","الرابع","الخامس","السادس","السابع","الثامن","التاسع","العاشر","الحادي عشر","الثاني عشر"][i]}`
-);
 const STYLES = [
   { v: "educational", l: "تعليمي كلاسيكي" },
   { v: "modern", l: "حديث وعصري" },
@@ -34,7 +31,6 @@ const STYLES = [
 function GeneratePage() {
   const generate = useServerFn(generateInfographic);
   const [subject, setSubject] = useState(SUBJECTS[0]);
-  const [grade, setGrade] = useState(GRADES[5]);
   const [style, setStyle] = useState(STYLES[0].v);
   const [lesson, setLesson] = useState("");
   const [loading, setLoading] = useState(false);
@@ -49,7 +45,7 @@ function GeneratePage() {
     setLoading(true);
     setResult(null);
     try {
-      const { content } = await generate({ data: { subject, lesson, grade, style } });
+      const { content } = await generate({ data: { subject, lesson, style } });
       setResult(content);
       toast.success("تم توليد الإنفوجرافيك بنجاح!");
     } catch (err: any) {
@@ -101,9 +97,18 @@ function GeneratePage() {
           </div>
 
           <Field label="المادة">
-            <select value={subject} onChange={(e) => setSubject(e.target.value)} className={input}>
-              {SUBJECTS.map((s) => <option key={s}>{s}</option>)}
-            </select>
+            <input
+              list="subjects"
+              value={subject}
+              onChange={(e) => setSubject(e.target.value)}
+              placeholder="اختر المادة أو اكتب مادة جديدة"
+              className={input}
+            />
+            <datalist id="subjects">
+              {SUBJECTS.map((s) => (
+                <option key={s} value={s} />
+              ))}
+            </datalist>
           </Field>
 
           <Field label="عنوان الدرس">
@@ -113,12 +118,6 @@ function GeneratePage() {
               placeholder="مثال: موقع مصر الفلكي والجغرافي"
               className={input}
             />
-          </Field>
-
-          <Field label="الصف الدراسي">
-            <select value={grade} onChange={(e) => setGrade(e.target.value)} className={input}>
-              {GRADES.map((g) => <option key={g}>{g}</option>)}
-            </select>
           </Field>
 
           <Field label="أسلوب التصميم">
