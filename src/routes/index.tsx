@@ -296,11 +296,16 @@ function DemoForm() {
     >
       <div>
         <label className="text-sm font-bold mb-2 block">المادة</label>
-        <select className="w-full bg-input/60 border border-border rounded-xl px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-[var(--gold)]/40">
+        <input
+          list="demo-subjects"
+          placeholder="اختر المادة أو اكتب مادة جديدة"
+          className="w-full bg-input/60 border border-border rounded-xl px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-[var(--gold)]/40"
+        />
+        <datalist id="demo-subjects">
           {["تاريخ", "جغرافيا", "علوم", "رياضيات", "لغة عربية", "تربية إسلامية"].map((s) => (
-            <option key={s}>{s}</option>
+            <option key={s} value={s} />
           ))}
-        </select>
+        </datalist>
       </div>
       <div>
         <label className="text-sm font-bold mb-2 block">عنوان الدرس</label>
@@ -309,14 +314,6 @@ function DemoForm() {
           placeholder="مثال: موقع مصر الفلكي والجغرافي"
           className="w-full bg-input/60 border border-border rounded-xl px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-[var(--gold)]/40"
         />
-      </div>
-      <div>
-        <label className="text-sm font-bold mb-2 block">الصف الدراسي</label>
-        <select className="w-full bg-input/60 border border-border rounded-xl px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-[var(--gold)]/40">
-          {Array.from({ length: 12 }).map((_, i) => (
-            <option key={i}>الصف {["الأول","الثاني","الثالث","الرابع","الخامس","السادس","السابع","الثامن","التاسع","العاشر","الحادي عشر","الثاني عشر"][i]}</option>
-          ))}
-        </select>
       </div>
       <MagneticButton variant="primary" className="w-full">
         توليد نموذج
