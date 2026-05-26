@@ -107,7 +107,7 @@ export function Navbar() {
                   </Avatar>
                 </button>
               </DropdownMenuTrigger>
-              <DropdownMenuContent align="end" className="w-56" dir="rtl">
+              <DropdownMenuContent align="end" className="w-56">
                 <DropdownMenuLabel className="flex flex-col gap-1">
                   <span className="font-bold truncate">{displayName}</span>
                   <span className="text-xs text-muted-foreground truncate font-normal">{user.email}</span>
