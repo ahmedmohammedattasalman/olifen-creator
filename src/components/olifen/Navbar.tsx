@@ -47,7 +47,7 @@ export function Navbar() {
 
         <div className="hidden md:flex items-center gap-3">
           <Link
-            to="/generate"
+            to="/auth"
             className="px-4 py-2 rounded-full text-sm font-bold bg-[var(--gold)] text-background hover:bg-[var(--gold-light)] transition-colors"
           >
             ابدأ مجاناً
@@ -81,7 +81,7 @@ export function Navbar() {
               ))}
               <li>
                 <Link
-                  to="/generate"
+                  to="/auth"
                   onClick={() => setOpen(false)}
                   className="block text-center mt-2 px-4 py-3 rounded-full font-bold bg-[var(--gold)] text-background"
                 >
