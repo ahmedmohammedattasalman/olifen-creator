@@ -38,9 +38,26 @@ function getPriceInfo(data: any) {
 
 /** Upsert a subscription record in Supabase */
 async function upsertSubscription(data: any, statusOverride?: string) {
-  const userId = getUserId(data);
+  let userId = getUserId(data);
+  const email = data.customer?.email;
+
+  if (!userId && email) {
+    console.log(`[Polar Webhook] No customer.external_id found. Looking up user by email: ${email}`);
+    const { data: profileData, error: profileError } = await supabaseAdmin
+      .from("profiles")
+      .select("id")
+      .eq("email", email)
+      .maybeSingle();
+    if (!profileError && profileData) {
+      userId = profileData.id;
+      console.log(`[Polar Webhook] Found user ID by email: ${userId}`);
+    } else if (profileError) {
+      console.error(`[Polar Webhook] Error looking up user by email: ${profileError.message}`);
+    }
+  }
+
   if (!userId) {
-    console.error("[Polar Webhook] No customer.external_id found, cannot resolve user:", JSON.stringify(data?.customer));
+    console.error("[Polar Webhook] No customer.external_id or matching email found, cannot resolve user:", JSON.stringify(data?.customer));
     return;
   }
 
