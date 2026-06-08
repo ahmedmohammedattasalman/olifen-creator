@@ -68,7 +68,7 @@ function ProfilePage() {
 
         if (profile) {
           if (active) {
-            setDisplayName(profile.display_name || "");
+            setDisplayName(profile.full_name || "");
             setAvatarUrl(profile.avatar_url);
           }
         } else {
@@ -83,7 +83,7 @@ function ProfilePage() {
             .from("profiles")
             .insert({
               id: currentUser.id,
-              display_name: defaultName,
+              full_name: defaultName,
               avatar_url: currentUser.user_metadata?.avatar_url || null,
             })
             .select()
@@ -102,7 +102,7 @@ function ProfilePage() {
           }
 
           if (active && newProfile) {
-            setDisplayName(newProfile.display_name || "");
+            setDisplayName(newProfile.full_name || "");
             setAvatarUrl(newProfile.avatar_url);
           }
         }
@@ -166,7 +166,7 @@ function ProfilePage() {
       const { error } = await supabase
         .from("profiles")
         .update({
-          display_name: displayName,
+          full_name: displayName,
           avatar_url: avatarUrl,
           updated_at: new Date().toISOString(),
         })

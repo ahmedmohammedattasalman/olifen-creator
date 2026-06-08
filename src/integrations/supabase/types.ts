@@ -14,25 +14,70 @@ export type Database = {
   }
   public: {
     Tables: {
+      generations: {
+        Row: {
+          created_at: string
+          id: string
+          is_saved: boolean
+          product_image_url: string | null
+          prompt: string | null
+          result_image_url: string | null
+          status: string
+          template_id: string | null
+          template_image_url: string | null
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          is_saved?: boolean
+          product_image_url?: string | null
+          prompt?: string | null
+          result_image_url?: string | null
+          status?: string
+          template_id?: string | null
+          template_image_url?: string | null
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          is_saved?: boolean
+          product_image_url?: string | null
+          prompt?: string | null
+          result_image_url?: string | null
+          status?: string
+          template_id?: string | null
+          template_image_url?: string | null
+          user_id?: string
+        }
+        Relationships: []
+      }
       profiles: {
         Row: {
           avatar_url: string | null
           created_at: string
-          display_name: string | null
+          email: string | null
+          full_name: string | null
+          generation_count: number
           id: string
           updated_at: string
         }
         Insert: {
           avatar_url?: string | null
           created_at?: string
-          display_name?: string | null
+          email?: string | null
+          full_name?: string | null
+          generation_count?: number
           id: string
           updated_at?: string
         }
         Update: {
           avatar_url?: string | null
           created_at?: string
-          display_name?: string | null
+          email?: string | null
+          full_name?: string | null
+          generation_count?: number
           id?: string
           updated_at?: string
         }
@@ -40,55 +85,55 @@ export type Database = {
       }
       subscriptions: {
         Row: {
+          amount: number | null
+          cancel_at_period_end: boolean
+          created_at: string
+          currency: string | null
+          current_period_end: string | null
+          current_period_start: string | null
           id: string
-          user_id: string
-          polar_subscription_id: string
           polar_customer_id: string | null
+          polar_subscription_id: string
           product_id: string
           product_name: string | null
-          status: string
-          current_period_start: string | null
-          current_period_end: string | null
-          cancel_at_period_end: boolean
-          amount: number | null
-          currency: string | null
           recurring_interval: string | null
-          created_at: string
+          status: string
           updated_at: string
+          user_id: string
         }
         Insert: {
+          amount?: number | null
+          cancel_at_period_end?: boolean
+          created_at?: string
+          currency?: string | null
+          current_period_end?: string | null
+          current_period_start?: string | null
           id?: string
-          user_id: string
-          polar_subscription_id: string
           polar_customer_id?: string | null
+          polar_subscription_id: string
           product_id: string
           product_name?: string | null
-          status?: string
-          current_period_start?: string | null
-          current_period_end?: string | null
-          cancel_at_period_end?: boolean
-          amount?: number | null
-          currency?: string | null
           recurring_interval?: string | null
-          created_at?: string
+          status?: string
           updated_at?: string
+          user_id: string
         }
         Update: {
+          amount?: number | null
+          cancel_at_period_end?: boolean
+          created_at?: string
+          currency?: string | null
+          current_period_end?: string | null
+          current_period_start?: string | null
           id?: string
-          user_id?: string
-          polar_subscription_id?: string
           polar_customer_id?: string | null
+          polar_subscription_id?: string
           product_id?: string
           product_name?: string | null
-          status?: string
-          current_period_start?: string | null
-          current_period_end?: string | null
-          cancel_at_period_end?: boolean
-          amount?: number | null
-          currency?: string | null
           recurring_interval?: string | null
-          created_at?: string
+          status?: string
           updated_at?: string
+          user_id?: string
         }
         Relationships: []
       }
@@ -97,7 +142,16 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
-      [_ in never]: never
+      delete_user_account: { Args: never; Returns: undefined }
+      get_user_plan: {
+        Args: { uid: string }
+        Returns: {
+          generation_limit: number
+          is_active: boolean
+          plan_name: string
+        }[]
+      }
+      increment_generation_count: { Args: { uid: string }; Returns: undefined }
     }
     Enums: {
       [_ in never]: never
