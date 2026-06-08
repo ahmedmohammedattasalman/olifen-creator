@@ -87,19 +87,20 @@ Deno.serve(async (req: Request) => {
       // Log the full subscription object to make debugging easy
       console.log("Subscription data payload:", JSON.stringify(sub, null, 2));
 
-      // Helper function to scan a metadata object for keys or values matching starter/pro
+      // Helper function to scan a metadata object for keys or values matching starter/pro/ultra
       const scanMetadata = (metadataObj: any): string | null => {
         if (!metadataObj || typeof metadataObj !== "object") return null;
         console.log("Scanning metadata object:", JSON.stringify(metadataObj));
         
         // Check for common keys like 'plan', 'product', 'tier'
-        const keysToCheck = ["plan", "product", "tier", "subscription", "starter", "pro"];
+        const keysToCheck = ["plan", "product", "tier", "subscription", "starter", "pro", "basic", "ultra"];
         for (const k of keysToCheck) {
           const val = metadataObj[k];
           if (val) {
             const valStr = String(val).toLowerCase();
             if (valStr.includes("pro")) return "PRO";
-            if (valStr.includes("starter") || valStr.includes("infographic")) return "STARTER";
+            if (valStr.includes("starter") || valStr.includes("infographic") || valStr.includes("basic")) return "STARTER";
+            if (valStr.includes("ultra")) return "ULTRA";
           }
         }
         
@@ -111,8 +112,11 @@ Deno.serve(async (req: Request) => {
           if (kLower === "pro" || vLower.includes("pro")) {
             return "PRO";
           }
-          if (kLower === "starter" || vLower.includes("starter") || vLower.includes("infographic")) {
+          if (kLower === "starter" || vLower.includes("starter") || vLower.includes("infographic") || vLower.includes("basic")) {
             return "STARTER";
+          }
+          if (kLower === "ultra" || vLower.includes("ultra")) {
+            return "ULTRA";
           }
         }
         return null;
@@ -146,9 +150,12 @@ Deno.serve(async (req: Request) => {
         if (lowerName.includes("pro")) {
           mappedProductId = "PRO";
           console.log("Mapped subscription product to PRO based on name:", productName);
-        } else if (lowerName.includes("starter") || lowerName.includes("infographic")) {
+        } else if (lowerName.includes("starter") || lowerName.includes("infographic") || lowerName.includes("basic")) {
           mappedProductId = "STARTER";
           console.log("Mapped subscription product to STARTER based on name:", productName);
+        } else if (lowerName.includes("ultra")) {
+          mappedProductId = "ULTRA";
+          console.log("Mapped subscription product to ULTRA based on name:", productName);
         } else if (productName) {
           mappedProductId = productName;
           console.log("Mapped subscription product to raw name:", productName);
@@ -157,16 +164,26 @@ Deno.serve(async (req: Request) => {
         }
       }
 
+      const price = sub.price;
+      const amount = price?.amount_type === "fixed" ? price?.price_amount : null;
+      const currency = price?.price_currency ?? "usd";
+      const recurringInterval = sub.recurring_interval ?? price?.recurring_interval ?? null;
+
       const { error } = await supabase.from("subscriptions").upsert(
         {
           user_id: supabaseUserId,
           polar_subscription_id: sub.id,
+          polar_customer_id: sub.customer?.id ?? null,
+          product_id: mappedProductId,
+          product_name: sub.product?.name ?? null,
           status: sub.status,
           price_id: sub.price_id ?? null,
-          product_id: mappedProductId,
           current_period_start: sub.current_period_start ?? null,
           current_period_end: sub.current_period_end ?? null,
           cancel_at_period_end: sub.cancel_at_period_end ?? false,
+          amount,
+          currency,
+          recurring_interval: recurringInterval,
           updated_at: new Date().toISOString(),
         },
         { onConflict: "polar_subscription_id" }
