@@ -84,6 +84,7 @@ function ProfilePage() {
             .insert({
               id: currentUser.id,
               full_name: defaultName,
+              email: currentUser.email || null,
               avatar_url: currentUser.user_metadata?.avatar_url || null,
             })
             .select()
@@ -222,7 +223,10 @@ function ProfilePage() {
   }
 
   const getPlanName = () => {
-    if (!subscription || (subscription.status !== "active" && subscription.status !== "canceled")) {
+    const isCanceledButActive = subscription?.status === "canceled" && subscription?.current_period_end && new Date(subscription.current_period_end) > new Date();
+    const isActive = subscription?.status === "active";
+    
+    if (!subscription || (!isActive && !isCanceledButActive)) {
       return "الخطة المجانية (FREE)";
     }
     
@@ -332,7 +336,7 @@ function ProfilePage() {
               </span>
             </div>
 
-            {subscription && (subscription.status === "active" || subscription.status === "canceled") ? (
+            {subscription && (subscription.status === "active" || (subscription.status === "canceled" && subscription.current_period_end && new Date(subscription.current_period_end) > new Date())) ? (
               <div className="space-y-2 text-xs text-muted-foreground">
                 <div className="flex justify-between">
                   <span>تاريخ انتهاء الفترة:</span>
