@@ -6,6 +6,8 @@ import { toast } from "sonner";
 
 import { supabase } from "@/integrations/supabase/client";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { syncUserSubscription } from "@/lib/subscription.functions";
+import { useServerFn } from "@tanstack/react-start";
 
 export const Route = createFileRoute("/profile")({
   component: ProfilePage,
@@ -20,6 +22,7 @@ export const Route = createFileRoute("/profile")({
 function ProfilePage() {
   const navigate = useNavigate();
   const fileInputRef = useRef<HTMLInputElement>(null);
+  const syncSubscription = useServerFn(syncUserSubscription);
 
   const [user, setUser] = useState<any>(null);
   const [loading, setLoading] = useState(true);
@@ -108,33 +111,51 @@ function ProfilePage() {
           }
         }
 
-        // Fetch subscriptions to find active one or most recent update
-        const { data: subsData, error: subError, status: subStatus } = await supabase
-          .from("subscriptions")
-          .select("*")
-          .eq("user_id", currentUser.id);
+        // Get current auth session token
+        const { data: { session } } = await supabase.auth.getSession();
+        const token = session?.access_token;
+        let syncedSub = null;
 
-        if (subError) {
-          if (subStatus === 401) {
-            await supabase.auth.signOut();
-            if (active) {
-              toast.error("انتهت صلاحية الجلسة، يرجى تسجيل الدخول مرة أخرى");
-              navigate({ to: "/auth" });
+         if (token) {
+          try {
+            console.log("Syncing subscription from Polar API...");
+            const syncResult = await syncSubscription({ data: { token } });
+            if (syncResult && syncResult.subscription) {
+              syncedSub = syncResult.subscription;
+              if (active) setSubscription(syncedSub);
             }
-            return;
+          } catch (syncErr) {
+            console.error("Failed to sync subscription via server function:", syncErr);
           }
-          // Non-auth subscription errors shouldn't block profile load
-          console.error("Error fetching subscriptions:", subError);
         }
 
-        if (subsData && subsData.length > 0) {
-          // Select the active subscription first, or fall back to the most recently updated one
-          const activeSub = subsData.find((s) => s.status === "active");
-          const selectedSub = activeSub || subsData.reduce((latest, current) => {
-            return new Date(current.updated_at) > new Date(latest.updated_at) ? current : latest;
-          }, subsData[0]);
+        // If not synced/found via server function, fall back to local database query
+        if (!syncedSub) {
+          const { data: subsData, error: subError, status: subStatus } = await supabase
+            .from("subscriptions")
+            .select("*")
+            .eq("user_id", currentUser.id);
 
-          if (active) setSubscription(selectedSub);
+          if (subError) {
+            if (subStatus === 401) {
+              await supabase.auth.signOut();
+              if (active) {
+                toast.error("انتهت صلاحية الجلسة، يرجى تسجيل الدخول مرة أخرى");
+                navigate({ to: "/auth" });
+              }
+              return;
+            }
+            console.error("Error fetching subscriptions:", subError);
+          }
+
+          if (subsData && subsData.length > 0) {
+            const activeSub = subsData.find((s) => s.status === "active");
+            const selectedSub = activeSub || subsData.reduce((latest, current) => {
+              return new Date(current.updated_at) > new Date(latest.updated_at) ? current : latest;
+            }, subsData[0]);
+
+            if (active) setSubscription(selectedSub);
+          }
         }
       } catch (err) {
         console.error("Error loading profile:", err);
