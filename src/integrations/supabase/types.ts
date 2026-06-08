@@ -38,6 +38,60 @@ export type Database = {
         }
         Relationships: []
       }
+      subscriptions: {
+        Row: {
+          id: string
+          user_id: string
+          polar_subscription_id: string
+          polar_customer_id: string | null
+          product_id: string
+          product_name: string | null
+          status: string
+          current_period_start: string | null
+          current_period_end: string | null
+          cancel_at_period_end: boolean
+          amount: number | null
+          currency: string | null
+          recurring_interval: string | null
+          created_at: string
+          updated_at: string
+        }
+        Insert: {
+          id?: string
+          user_id: string
+          polar_subscription_id: string
+          polar_customer_id?: string | null
+          product_id: string
+          product_name?: string | null
+          status?: string
+          current_period_start?: string | null
+          current_period_end?: string | null
+          cancel_at_period_end?: boolean
+          amount?: number | null
+          currency?: string | null
+          recurring_interval?: string | null
+          created_at?: string
+          updated_at?: string
+        }
+        Update: {
+          id?: string
+          user_id?: string
+          polar_subscription_id?: string
+          polar_customer_id?: string | null
+          product_id?: string
+          product_name?: string | null
+          status?: string
+          current_period_start?: string | null
+          current_period_end?: string | null
+          cancel_at_period_end?: boolean
+          amount?: number | null
+          currency?: string | null
+          recurring_interval?: string | null
+          created_at?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never

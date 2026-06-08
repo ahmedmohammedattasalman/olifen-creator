@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { createFileRoute, Link } from "@tanstack/react-router";
+import { toast } from "sonner";
 import { motion } from "framer-motion";
 import {
   Sparkles, Palette, Download, Pencil, ArrowLeft, Star,
@@ -78,6 +79,17 @@ const item: Variants = {
 function Landing() {
   const typed = useTypewriter();
 
+  useEffect(() => {
+    if (typeof window !== "undefined") {
+      const searchParams = new URLSearchParams(window.location.search);
+      if (searchParams.get("checkout_id")) {
+        toast.success("تمت عملية الاشتراك بنجاح! شكراً لانضمامك إلى Olifen.", { duration: 5000 });
+        // Remove checkout_id from URL to prevent showing toast again on refresh
+        window.history.replaceState({}, document.title, window.location.pathname);
+      }
+    }
+  }, []);
+
   return (
     <main className="bg-background text-foreground">
       <IntroOverlay />
@@ -87,9 +99,9 @@ function Landing() {
       <section className="relative min-h-[100svh] pt-28 pb-16 overflow-hidden">
         <div className="absolute inset-0 bg-grid opacity-40" />
         <ParticleCanvas />
-        <div className="absolute -top-32 right-1/4 h-[420px] w-[420px] rounded-full bg-[var(--violet)]/30 blur-[100px]" />
-        <div className="absolute top-1/3 left-1/4 h-[380px] w-[380px] rounded-full bg-[var(--gold)]/20 blur-[100px]" />
-        <div className="absolute bottom-0 left-1/3 h-[300px] w-[300px] rounded-full bg-[var(--cyan)]/15 blur-[100px]" />
+        <div className="absolute -top-32 right-1/4 h-[420px] w-[420px] rounded-full bg-violet/30 blur-[100px]" />
+        <div className="absolute top-1/3 left-1/4 h-[380px] w-[380px] rounded-full bg-gold/20 blur-[100px]" />
+        <div className="absolute bottom-0 left-1/3 h-[300px] w-[300px] rounded-full bg-cyan/15 blur-[100px]" />
 
         <div className="relative mx-auto max-w-7xl px-6 grid lg:grid-cols-2 gap-12 items-center">
           <motion.div initial="hidden" animate="show" variants={container} className="text-center lg:text-right">
@@ -152,7 +164,7 @@ function Landing() {
           viewport={{ once: true, amount: 0.3 }}
           className="relative grid md:grid-cols-3 gap-6"
         >
-          <div className="hidden md:block absolute top-12 right-[16%] left-[16%] h-px bg-gradient-to-l from-[var(--cyan)] via-[var(--violet)] to-[var(--gold)]" />
+          <div className="hidden md:block absolute top-12 right-[16%] left-[16%] h-px bg-gradient-to-l from-cyan via-violet to-gold" />
           {[
             { n: "١", icon: Pencil, title: "أدخل المادة والدرس", desc: "اكتب موضوعك وحدد الصف والمادة بسهولة.", c: "text-[var(--cyan)]" },
             { n: "٢", icon: Palette, title: "اختر أسلوب التصميم", desc: "أساليب متعددة تناسب كل مادة وفئة عمرية.", c: "text-[var(--violet)]" },
@@ -209,7 +221,7 @@ function Landing() {
       </Section>
 
       {/* ───────── STATS ───────── */}
-      <section className="relative py-20 mt-10 border-y border-border bg-gradient-to-l from-[var(--gold)]/5 via-transparent to-[var(--violet)]/5">
+      <section className="relative py-20 mt-10 border-y border-border bg-gradient-to-l from-gold/5 via-transparent to-violet/5">
         <div className="mx-auto max-w-7xl px-6 grid grid-cols-2 md:grid-cols-4 gap-10">
           <CounterStat value={500} prefix="+" label="معلم يستخدم Olifen" />
           <CounterStat value={2000} prefix="+" label="إنفوجرافيك تم توليده" />
@@ -233,9 +245,9 @@ function Landing() {
 
       {/* ───────── CTA ───────── */}
       <section className="relative py-24 overflow-hidden">
-        <div className="absolute inset-0 bg-gradient-to-l from-[var(--violet)]/30 via-[var(--violet)]/10 to-[var(--gold)]/20" />
-        <div className="absolute top-10 right-1/3 h-80 w-80 rounded-full bg-[var(--gold)]/30 blur-[100px]" />
-        <div className="absolute bottom-0 left-1/4 h-80 w-80 rounded-full bg-[var(--violet)]/40 blur-[100px]" />
+        <div className="absolute inset-0 bg-gradient-to-l from-violet/30 via-violet/10 to-gold/20" />
+        <div className="absolute top-10 right-1/3 h-80 w-80 rounded-full bg-gold/30 blur-[100px]" />
+        <div className="absolute bottom-0 left-1/4 h-80 w-80 rounded-full bg-violet/40 blur-[100px]" />
         <div className="relative mx-auto max-w-3xl px-6 text-center">
           <h2 className="font-display text-4xl md:text-5xl font-black mb-5">
             جاهز لتحويل <span className="text-gradient-gold">دروسك</span>؟
@@ -299,7 +311,7 @@ function DemoForm() {
         <input
           list="demo-subjects"
           placeholder="اختر المادة أو اكتب مادة جديدة"
-          className="w-full bg-input/60 border border-border rounded-xl px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-[var(--gold)]/40"
+          className="w-full bg-input/60 border border-border rounded-xl px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-gold/40"
         />
         <datalist id="demo-subjects">
           {["تاريخ", "جغرافيا", "علوم", "رياضيات", "لغة عربية", "تربية إسلامية"].map((s) => (
@@ -312,7 +324,7 @@ function DemoForm() {
         <input
           type="text"
           placeholder="مثال: موقع مصر الفلكي والجغرافي"
-          className="w-full bg-input/60 border border-border rounded-xl px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-[var(--gold)]/40"
+          className="w-full bg-input/60 border border-border rounded-xl px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-gold/40"
         />
       </div>
       <MagneticButton variant="primary" className="w-full">
@@ -352,6 +364,14 @@ function PricingSection() {
       features: ["كل ميزات Starter", "محرر تصميم متقدم", "قوالب مدرسية مخصصة", "ترخيص للمؤسسات"],
       cta: "اختر Pro",
     },
+    {
+      name: "ULTRA",
+      price: { monthly: 30, yearly: 288 },
+      unit: "USD",
+      limit: "غير محدود + دعم VIP",
+      features: ["كل ميزات Pro", "توليد فائق السرعة", "دعم فني مخصص ٢٤/٧", "خصائص تصميم حصرية"],
+      cta: "اختر Ultra",
+    },
   ];
 
   return (
@@ -390,7 +410,7 @@ function PricingSection() {
           </div>
         </div>
 
-        <div className="grid md:grid-cols-3 gap-6 max-w-5xl mx-auto items-stretch">
+        <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-6 max-w-7xl mx-auto items-stretch">
           {plans.map((p) => (
             <PricingCard key={p.name} plan={p} yearly={yearly} />
           ))}

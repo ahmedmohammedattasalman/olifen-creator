@@ -32,10 +32,10 @@
   --color-input: var(--input);
   --color-ring: var(--ring);
 
-  --color-gold: var(--gold);
-  --color-gold-light: var(--gold-light);
-  --color-violet: var(--violet);
-  --color-cyan: var(--cyan);
+  --color-gold: #c8a97e;
+  --color-gold-light: #f0d9a8;
+  --color-violet: #7c3aed;
+  --color-cyan: #06b6d4;
 
   --font-display: 'Reem Kufi', 'IBM Plex Sans Arabic', sans-serif;
   --font-body: 'IBM Plex Sans Arabic', 'Reem Kufi', sans-serif;

@@ -9,10 +9,17 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
+import { Route as ProfileRouteImport } from './routes/profile'
 import { Route as GenerateRouteImport } from './routes/generate'
 import { Route as AuthRouteImport } from './routes/auth'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as ApiWebhooksPolarRouteImport } from './routes/api/webhooks/polar'
 
+const ProfileRoute = ProfileRouteImport.update({
+  id: '/profile',
+  path: '/profile',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const GenerateRoute = GenerateRouteImport.update({
   id: '/generate',
   path: '/generate',
@@ -28,39 +35,65 @@ const IndexRoute = IndexRouteImport.update({
   path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ApiWebhooksPolarRoute = ApiWebhooksPolarRouteImport.update({
+  id: '/api/webhooks/polar',
+  path: '/api/webhooks/polar',
+  getParentRoute: () => rootRouteImport,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/auth': typeof AuthRoute
   '/generate': typeof GenerateRoute
+  '/profile': typeof ProfileRoute
+  '/api/webhooks/polar': typeof ApiWebhooksPolarRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/auth': typeof AuthRoute
   '/generate': typeof GenerateRoute
+  '/profile': typeof ProfileRoute
+  '/api/webhooks/polar': typeof ApiWebhooksPolarRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
   '/auth': typeof AuthRoute
   '/generate': typeof GenerateRoute
+  '/profile': typeof ProfileRoute
+  '/api/webhooks/polar': typeof ApiWebhooksPolarRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/auth' | '/generate'
+  fullPaths: '/' | '/auth' | '/generate' | '/profile' | '/api/webhooks/polar'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/auth' | '/generate'
-  id: '__root__' | '/' | '/auth' | '/generate'
+  to: '/' | '/auth' | '/generate' | '/profile' | '/api/webhooks/polar'
+  id:
+    | '__root__'
+    | '/'
+    | '/auth'
+    | '/generate'
+    | '/profile'
+    | '/api/webhooks/polar'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   AuthRoute: typeof AuthRoute
   GenerateRoute: typeof GenerateRoute
+  ProfileRoute: typeof ProfileRoute
+  ApiWebhooksPolarRoute: typeof ApiWebhooksPolarRoute
 }
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
+    '/profile': {
+      id: '/profile'
+      path: '/profile'
+      fullPath: '/profile'
+      preLoaderRoute: typeof ProfileRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/generate': {
       id: '/generate'
       path: '/generate'
@@ -82,6 +115,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/api/webhooks/polar': {
+      id: '/api/webhooks/polar'
+      path: '/api/webhooks/polar'
+      fullPath: '/api/webhooks/polar'
+      preLoaderRoute: typeof ApiWebhooksPolarRouteImport
+      parentRoute: typeof rootRouteImport
+    }
   }
 }
 
@@ -89,7 +129,19 @@ const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   AuthRoute: AuthRoute,
   GenerateRoute: GenerateRoute,
+  ProfileRoute: ProfileRoute,
+  ApiWebhooksPolarRoute: ApiWebhooksPolarRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
   ._addFileTypes<FileRouteTypes>()
+
+import type { getRouter } from './router.tsx'
+import type { startInstance } from './start.ts'
+declare module '@tanstack/react-start' {
+  interface Register {
+    ssr: true
+    router: Awaited<ReturnType<typeof getRouter>>
+    config: Awaited<ReturnType<typeof startInstance.getOptions>>
+  }
+}

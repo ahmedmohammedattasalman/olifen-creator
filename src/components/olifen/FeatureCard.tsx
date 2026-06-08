@@ -9,9 +9,9 @@ interface Props {
 }
 
 const accentMap = {
-  gold: "from-[var(--gold)]/30 to-[var(--gold)]/0 text-[var(--gold)]",
-  violet: "from-[var(--violet)]/30 to-[var(--violet)]/0 text-[var(--violet)]",
-  cyan: "from-[var(--cyan)]/30 to-[var(--cyan)]/0 text-[var(--cyan)]",
+  gold: "from-gold/30 to-gold/0 text-[var(--gold)]",
+  violet: "from-violet/30 to-violet/0 text-[var(--violet)]",
+  cyan: "from-cyan/30 to-cyan/0 text-[var(--cyan)]",
 };
 
 export function FeatureCard({ icon: Icon, title, desc, accent = "gold" }: Props) {

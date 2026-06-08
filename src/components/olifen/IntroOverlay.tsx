@@ -24,13 +24,13 @@ export default function IntroOverlay() {
             initial={{ scale: 0.6, opacity: 0 }}
             animate={{ scale: 1.4, opacity: 1 }}
             transition={{ duration: 1.6, ease: [0.16, 1, 0.3, 1] }}
-            className="absolute h-[520px] w-[520px] rounded-full bg-[var(--violet)]/30 blur-[120px]"
+            className="absolute h-[520px] w-[520px] rounded-full bg-violet/30 blur-[120px]"
           />
           <motion.div
             initial={{ scale: 0.6, opacity: 0 }}
             animate={{ scale: 1.2, opacity: 1 }}
             transition={{ duration: 1.6, delay: 0.1, ease: [0.16, 1, 0.3, 1] }}
-            className="absolute h-[380px] w-[380px] rounded-full bg-[var(--gold)]/25 blur-[100px]"
+            className="absolute h-[380px] w-[380px] rounded-full bg-gold/25 blur-[100px]"
           />
 
           {/* sweep line */}
@@ -38,7 +38,7 @@ export default function IntroOverlay() {
             initial={{ x: "-120%" }}
             animate={{ x: "120%" }}
             transition={{ duration: 1.4, ease: [0.65, 0, 0.35, 1] }}
-            className="absolute top-1/2 h-px w-[140%] bg-gradient-to-r from-transparent via-[var(--gold)] to-transparent"
+            className="absolute top-1/2 h-px w-[140%] bg-gradient-to-r from-transparent via-gold to-transparent"
           />
 
           <div className="relative flex flex-col items-center gap-4">
@@ -46,7 +46,7 @@ export default function IntroOverlay() {
               initial={{ scale: 0, rotate: -180, opacity: 0 }}
               animate={{ scale: 1, rotate: 0, opacity: 1 }}
               transition={{ duration: 0.9, delay: 0.1, ease: [0.16, 1, 0.3, 1] }}
-              className="flex h-16 w-16 items-center justify-center rounded-2xl border border-[var(--gold)]/40 bg-[var(--gold)]/10 backdrop-blur-sm"
+              className="flex h-16 w-16 items-center justify-center rounded-2xl border border-gold/40 bg-gold/10 backdrop-blur-sm"
             >
               <Sparkles className="h-7 w-7 text-[var(--gold)]" />
             </motion.div>
@@ -67,7 +67,7 @@ export default function IntroOverlay() {
               initial={{ scaleX: 0 }}
               animate={{ scaleX: 1 }}
               transition={{ duration: 1, delay: 0.9, ease: [0.65, 0, 0.35, 1] }}
-              className="h-px w-40 origin-right bg-gradient-to-l from-transparent via-[var(--gold)] to-transparent"
+              className="h-px w-40 origin-right bg-gradient-to-l from-transparent via-gold to-transparent"
             />
 
             <motion.p

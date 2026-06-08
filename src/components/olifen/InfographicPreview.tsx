@@ -66,7 +66,7 @@ function HowToUseDemo() {
     <div className="relative">
       {/* glow */}
       <motion.div
-        className="absolute -inset-6 rounded-[2.5rem] bg-gradient-to-br from-[var(--gold)]/25 via-[var(--violet)]/20 to-[var(--cyan)]/20 blur-3xl"
+        className="absolute -inset-6 rounded-[2.5rem] bg-gradient-to-br from-gold/25 via-violet/20 to-cyan/20 blur-3xl"
         animate={{ opacity: [0.45, 0.85, 0.45], scale: [0.95, 1.02, 0.95] }}
         transition={{ duration: 5, repeat: Infinity }}
       />
@@ -127,7 +127,7 @@ function HowToUseDemo() {
         </div>
       </motion.div>
 
-      <div className="absolute -inset-4 rounded-[2rem] border border-[var(--gold)]/20 animate-spin-slow pointer-events-none" />
+      <div className="absolute -inset-4 rounded-[2rem] border border-gold/20 animate-spin-slow pointer-events-none" />
     </div>
   );
 }
@@ -165,7 +165,7 @@ function SubjectStep() {
             transition={{ delay: 0.1 + i * 0.08 }}
             className={`rounded-xl border p-3 flex items-center justify-center text-sm font-bold transition-colors ${
               picked === i
-                ? "border-[var(--cyan)]/60 bg-[var(--cyan)]/10 text-foreground"
+                ? "border-cyan/60 bg-cyan/10 text-foreground"
                 : "border-white/10 bg-white/[0.03] text-muted-foreground"
             }`}
           >
@@ -194,7 +194,7 @@ function LessonStep() {
   return (
     <motion.div {...stepWrap} className="h-full flex flex-col">
       <StepLabel>الخطوة الثانية — عنوان الدرس</StepLabel>
-      <div className="rounded-xl border border-[var(--violet)]/40 bg-white/[0.03] p-4 flex items-center min-h-[64px]">
+      <div className="rounded-xl border border-violet/40 bg-white/[0.03] p-4 flex items-center min-h-[64px]">
         <span className="font-display text-lg text-foreground">{text}</span>
         <span className="inline-block w-[2px] h-5 mx-1 bg-[var(--violet)] animate-pulse" />
       </div>
@@ -212,7 +212,7 @@ function GenerateStep() {
       <motion.button
         animate={{ scale: [1, 1.06, 1] }}
         transition={{ duration: 1.2, repeat: Infinity }}
-        className="relative inline-flex items-center gap-2 px-7 py-3 rounded-full font-bold text-sm bg-gradient-to-l from-[var(--gold)] via-[var(--violet)] to-[var(--cyan)] text-background overflow-hidden"
+        className="relative inline-flex items-center gap-2 px-7 py-3 rounded-full font-bold text-sm bg-gradient-to-l from-gold via-violet to-cyan text-background overflow-hidden"
       >
         <Sparkles className="h-4 w-4" />
         توليد الآن
@@ -256,7 +256,7 @@ function ResultStep() {
         initial={{ opacity: 0, scale: 0.92, y: 20 }}
         animate={{ opacity: 1, scale: 1, y: 0 }}
         transition={{ duration: 0.7, ease: [0.16, 1, 0.3, 1] }}
-        className="relative flex-1 rounded-xl overflow-hidden border border-[var(--gold)]/30 bg-black/40 shadow-[0_20px_60px_-20px_rgba(0,0,0,0.6)]"
+        className="relative flex-1 rounded-xl overflow-hidden border border-gold/30 bg-black/40 shadow-[0_20px_60px_-20px_rgba(0,0,0,0.6)]"
       >
         <img
           src={sampleHijra}
@@ -267,7 +267,7 @@ function ResultStep() {
           initial={{ y: "-100%" }}
           animate={{ y: "100%" }}
           transition={{ duration: 2.2, ease: "linear", delay: 0.3 }}
-          className="absolute inset-x-0 h-1/3 bg-gradient-to-b from-transparent via-[var(--gold)]/20 to-transparent pointer-events-none"
+          className="absolute inset-x-0 h-1/3 bg-gradient-to-b from-transparent via-gold/20 to-transparent pointer-events-none"
         />
       </motion.div>
     </motion.div>

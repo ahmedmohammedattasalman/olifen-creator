@@ -14,7 +14,7 @@ const styles: Record<Variant, string> = {
   ghost:
     "bg-transparent text-foreground hover:bg-white/5 border border-border",
   outline:
-    "bg-transparent text-[var(--gold)] border border-[var(--gold)]/50 hover:border-[var(--gold)]",
+    "bg-transparent text-[var(--gold)] border border-gold/50 hover:border-[var(--gold)]",
 };
 
 export function MagneticButton({ children, variant = "primary", className = "", ...rest }: Props) {

@@ -23,7 +23,7 @@ export function FAQAccordion() {
           <div
             key={i}
             className={`rounded-2xl glass overflow-hidden transition-colors ${
-              isOpen ? "border-[var(--gold)]/50" : ""
+              isOpen ? "border-gold/50" : ""
             }`}
           >
             <button

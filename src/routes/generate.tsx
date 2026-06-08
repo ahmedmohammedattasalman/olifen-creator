@@ -152,7 +152,7 @@ function GeneratePage() {
 }
 
 const input =
-  "w-full bg-input/60 border border-border rounded-xl px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-[var(--gold)]/40";
+  "w-full bg-input/60 border border-border rounded-xl px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-gold/40";
 
 function Field({ label, children }: { label: string; children: React.ReactNode }) {
   return (

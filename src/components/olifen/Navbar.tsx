@@ -117,7 +117,7 @@ export function Navbar() {
                   <LayoutDashboard className="ms-2 h-4 w-4" />
                   لوحة التحكم
                 </DropdownMenuItem>
-                <DropdownMenuItem onClick={() => navigate({ to: "/generate" })}>
+                <DropdownMenuItem onClick={() => navigate({ to: "/profile" })}>
                   <UserIcon className="ms-2 h-4 w-4" />
                   حسابي
                 </DropdownMenuItem>
@@ -188,6 +188,15 @@ export function Navbar() {
                       className="block text-center px-4 py-3 rounded-full font-bold border border-border"
                     >
                       لوحة التحكم
+                    </Link>
+                  </li>
+                  <li>
+                    <Link
+                      to="/profile"
+                      onClick={() => setOpen(false)}
+                      className="block text-center px-4 py-3 rounded-full font-bold border border-border mt-2"
+                    >
+                      حسابي
                     </Link>
                   </li>
                   <li>
