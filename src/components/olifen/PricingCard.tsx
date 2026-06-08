@@ -52,8 +52,8 @@ export function PricingCard({ plan, yearly }: { plan: Plan; yearly: boolean }) {
       const checkoutUrl = getCheckoutUrl(plan.name, yearly);
       if (checkoutUrl) {
         const url = new URL(checkoutUrl);
-        url.searchParams.set("customer_email", session.user.email || "");
-        url.searchParams.set("customer_external_id", session.user.id);
+        url.searchParams.set("customerEmail", session.user.email || "");
+        url.searchParams.set("customerExternalId", session.user.id);
         
         try {
           // Dynamically import @polar-sh/checkout/embed to prevent SSR errors

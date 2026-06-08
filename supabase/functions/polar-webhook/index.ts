@@ -54,7 +54,9 @@ Deno.serve(async (req: Request) => {
     if (
       event.type === "subscription.created" ||
       event.type === "subscription.updated" ||
-      event.type === "subscription.active"
+      event.type === "subscription.active" ||
+      event.type === "subscription.canceled" ||
+      event.type === "subscription.revoked"
     ) {
       const sub = event.data;
       let supabaseUserId = sub.customer?.external_id;
