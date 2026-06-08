@@ -1,6 +1,8 @@
-import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
-import { createClient } from "https://esm.sh/@supabase/supabase-js@2.39.0";
+import { createClient } from "npm:@supabase/supabase-js@2.39.0";
 import { validateEvent, WebhookVerificationError } from "npm:@polar-sh/sdk@0.47.1/webhooks";
+
+// Declare Deno global for standard TypeScript environments (e.g. VS Code / Node.js)
+declare const Deno: any;
 
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
@@ -8,7 +10,7 @@ const corsHeaders = {
     "authorization, x-client-info, apikey, content-type, webhook-id, webhook-signature, webhook-timestamp",
 };
 
-serve(async (req) => {
+Deno.serve(async (req: Request) => {
   if (req.method === "OPTIONS") {
     return new Response("ok", { headers: corsHeaders });
   }
@@ -37,12 +39,9 @@ serve(async (req) => {
       event = validateEvent(bodyText, headers, webhookSecret);
       console.log("Signature verified successfully via Polar SDK");
     } catch (e) {
-      if (e instanceof WebhookVerificationError) {
-        console.error("Invalid webhook signature:", e.message);
-        return new Response("Invalid signature", { status: 403 });
-      }
-      console.error("Signature verification error:", e ? (e as any).message : "Unknown error");
-      return new Response("Signature verification error", { status: 400 });
+      const errorMsg = e instanceof Error ? e.message : String(e);
+      console.error("Signature verification error:", errorMsg);
+      return new Response(`Signature verification error: ${errorMsg}`, { status: 400 });
     }
 
     console.log("Received Polar event:", event.type);
@@ -182,7 +181,7 @@ serve(async (req) => {
       status: 200,
     });
   } catch (error) {
-    console.error("Unhandled error:", error.message);
+    console.error("Unhandled error:", error instanceof Error ? error.message : String(error));
     return new Response("Internal Server Error", { status: 500 });
   }
 });
