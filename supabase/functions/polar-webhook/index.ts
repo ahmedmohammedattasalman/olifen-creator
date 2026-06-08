@@ -1,8 +1,12 @@
+import { Buffer } from "node:buffer";
 import { createClient } from "npm:@supabase/supabase-js@2.39.0";
 import { validateEvent, WebhookVerificationError } from "npm:@polar-sh/sdk@0.47.1/webhooks";
 
 // Declare Deno global for standard TypeScript environments (e.g. VS Code / Node.js)
 declare const Deno: any;
+
+// Polyfill Buffer for Deno environment where it is not defined globally by default
+(globalThis as any).Buffer = Buffer;
 
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
