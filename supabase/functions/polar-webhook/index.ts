@@ -1,67 +1,12 @@
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2.39.0";
+import { Webhook } from "npm:standardwebhooks";
 
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
   "Access-Control-Allow-Headers":
     "authorization, x-client-info, apikey, content-type, webhook-id, webhook-signature, webhook-timestamp",
 };
-
-/**
- * Verify a Standard Webhooks signature using Deno's built-in Web Crypto API.
- * Polar uses Standard Webhooks format:
- *   signed_content = "{webhook-id}.{webhook-timestamp}.{body}"
- *   signature      = base64(HMAC-SHA256(signed_content, secret))
- */
-async function verifyWebhookSignature(
-  body: string,
-  webhookId: string,
-  webhookTimestamp: string,
-  webhookSignature: string,
-  secret: string
-): Promise<boolean> {
-  try {
-    // The secret from Polar starts with "whsec_" or "polar_whs_" – strip the prefix
-    let rawSecret = secret;
-    if (secret.startsWith("whsec_")) rawSecret = secret.slice(6);
-    if (secret.startsWith("polar_whs_")) rawSecret = secret.slice(10);
-
-    // Decode base64 secret
-    const secretBytes = Uint8Array.from(atob(rawSecret), (c) => c.charCodeAt(0));
-
-    // Import the key
-    const key = await crypto.subtle.importKey(
-      "raw",
-      secretBytes,
-      { name: "HMAC", hash: "SHA-256" },
-      false,
-      ["verify", "sign"]
-    );
-
-    // Build the signed content
-    const signedContent = `${webhookId}.${webhookTimestamp}.${body}`;
-    const encoder = new TextEncoder();
-    const signedContentBytes = encoder.encode(signedContent);
-
-    // The header may contain multiple space-separated "v1,<base64>" values
-    const signatures = webhookSignature.split(" ");
-    for (const sig of signatures) {
-      const sigValue = sig.startsWith("v1,") ? sig.slice(3) : sig;
-      try {
-        const sigBytes = Uint8Array.from(atob(sigValue), (c) => c.charCodeAt(0));
-        const valid = await crypto.subtle.verify("HMAC", key, sigBytes, signedContentBytes);
-        if (valid) return true;
-      } catch {
-        // Try next signature
-        continue;
-      }
-    }
-    return false;
-  } catch (e) {
-    console.error("Signature verification error:", e.message);
-    return false;
-  }
-}
 
 serve(async (req) => {
   if (req.method === "OPTIONS") {
@@ -86,16 +31,16 @@ serve(async (req) => {
       return new Response("Server misconfiguration", { status: 500 });
     }
 
-    const isValid = await verifyWebhookSignature(
-      bodyText,
-      webhookId,
-      webhookTimestamp,
-      webhookSignature,
-      webhookSecret
-    );
-
-    if (!isValid) {
-      console.error("Invalid webhook signature");
+    try {
+      const wh = new Webhook(webhookSecret);
+      wh.verify(bodyText, {
+        "webhook-id": webhookId,
+        "webhook-timestamp": webhookTimestamp,
+        "webhook-signature": webhookSignature,
+      });
+      console.log("Signature verified successfully via standardwebhooks");
+    } catch (e) {
+      console.error("Invalid webhook signature:", e.message);
       return new Response("Invalid signature", { status: 403 });
     }
 
@@ -124,12 +69,16 @@ serve(async (req) => {
 
       if (!supabaseUserId && email) {
         console.log("Looking up user by email:", email);
-        const { data: userData, error: userError } = await supabase.auth.admin.getUserByEmail(email);
-        if (!userError && userData?.user) {
-          supabaseUserId = userData.user.id;
+        const { data: profileData, error: profileError } = await supabase
+          .from("profiles")
+          .select("id")
+          .eq("email", email)
+          .maybeSingle();
+        if (!profileError && profileData) {
+          supabaseUserId = profileData.id;
           console.log("Found user ID by email:", supabaseUserId);
-        } else if (userError) {
-          console.error("Error looking up user by email:", userError.message);
+        } else if (profileError) {
+          console.error("Error looking up user by email:", profileError.message);
         }
       }
 
