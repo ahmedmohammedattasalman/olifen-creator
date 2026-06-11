@@ -92,11 +92,10 @@ export type Database = {
           current_period_end: string | null
           current_period_start: string | null
           id: string
-          polar_customer_id: string | null
-          polar_subscription_id: string
-          product_id: string
-          product_name: string | null
-          recurring_interval: string | null
+          paddle_customer_id: string | null
+          paddle_price_id: string
+          paddle_subscription_id: string
+          plan_name: string | null
           status: string
           updated_at: string
           user_id: string
@@ -109,11 +108,10 @@ export type Database = {
           current_period_end?: string | null
           current_period_start?: string | null
           id?: string
-          polar_customer_id?: string | null
-          polar_subscription_id: string
-          product_id: string
-          product_name?: string | null
-          recurring_interval?: string | null
+          paddle_customer_id?: string | null
+          paddle_price_id: string
+          paddle_subscription_id: string
+          plan_name?: string | null
           status?: string
           updated_at?: string
           user_id: string
@@ -126,14 +124,34 @@ export type Database = {
           current_period_end?: string | null
           current_period_start?: string | null
           id?: string
-          polar_customer_id?: string | null
-          polar_subscription_id?: string
-          product_id?: string
-          product_name?: string | null
-          recurring_interval?: string | null
+          paddle_customer_id?: string | null
+          paddle_price_id?: string
+          paddle_subscription_id?: string
+          plan_name?: string | null
           status?: string
           updated_at?: string
           user_id?: string
+        }
+        Relationships: []
+      }
+      webhook_events: {
+        Row: {
+          event_id: string
+          id: string
+          occurred_at: string
+          processed_at: string
+        }
+        Insert: {
+          event_id: string
+          id?: string
+          occurred_at: string
+          processed_at?: string
+        }
+        Update: {
+          event_id?: string
+          id?: string
+          occurred_at?: string
+          processed_at?: string
         }
         Relationships: []
       }

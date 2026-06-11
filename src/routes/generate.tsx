@@ -1,5 +1,5 @@
-import { useState } from "react";
-import { createFileRoute, Link } from "@tanstack/react-router";
+import { useState, useEffect } from "react";
+import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { useServerFn } from "@tanstack/react-start";
 import { motion } from "framer-motion";
 import { toast } from "sonner";
@@ -8,6 +8,7 @@ import { ArrowRight, Sparkles, Download } from "lucide-react";
 import { generateInfographic } from "@/lib/generate.functions";
 import { MagneticButton } from "@/components/olifen/MagneticButton";
 import { InfographicPreview } from "@/components/olifen/InfographicPreview";
+import { supabase } from "@/integrations/supabase/client";
 
 export const Route = createFileRoute("/generate")({
   component: GeneratePage,
@@ -29,8 +30,20 @@ const STYLES = [
 ];
 
 function GeneratePage() {
+  const navigate = useNavigate();
   const generate = useServerFn(generateInfographic);
   const [subject, setSubject] = useState(SUBJECTS[0]);
+
+  useEffect(() => {
+    async function checkAuth() {
+      const { data: { session } } = await supabase.auth.getSession();
+      if (!session) {
+        toast.info("يرجى تسجيل الدخول أولاً للوصول إلى صفحة التوليد");
+        navigate({ to: "/auth" });
+      }
+    }
+    checkAuth();
+  }, [navigate]);
   const [style, setStyle] = useState(STYLES[0].v);
   const [lesson, setLesson] = useState("");
   const [loading, setLoading] = useState(false);

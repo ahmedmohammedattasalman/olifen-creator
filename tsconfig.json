@@ -22,8 +22,7 @@
     "noUncheckedSideEffectImports": true,
     "paths": {
       "@/*": ["./src/*"],
-      "npm:@supabase/supabase-js@2.39.0": ["./node_modules/@supabase/supabase-js"],
-      "npm:@polar-sh/sdk@0.47.1/webhooks": ["./node_modules/@polar-sh/sdk/dist/esm/webhooks.d.ts"]
+      "npm:@supabase/supabase-js@2.39.0": ["./node_modules/@supabase/supabase-js"]
     }
   }
 }

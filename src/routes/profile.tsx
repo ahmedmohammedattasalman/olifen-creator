@@ -6,8 +6,8 @@ import { toast } from "sonner";
 
 import { supabase } from "@/integrations/supabase/client";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { syncUserSubscription } from "@/lib/subscription.functions";
-import { useServerFn } from "@tanstack/react-start";
+import { toArabic } from "@/lib/arabic-numerals";
+
 
 export const Route = createFileRoute("/profile")({
   component: ProfilePage,
@@ -22,7 +22,6 @@ export const Route = createFileRoute("/profile")({
 function ProfilePage() {
   const navigate = useNavigate();
   const fileInputRef = useRef<HTMLInputElement>(null);
-  const syncSubscription = useServerFn(syncUserSubscription);
 
   const [user, setUser] = useState<any>(null);
   const [loading, setLoading] = useState(true);
@@ -31,7 +30,12 @@ function ProfilePage() {
 
   const [displayName, setDisplayName] = useState("");
   const [avatarUrl, setAvatarUrl] = useState<string | null>(null);
-  const [subscription, setSubscription] = useState<any>(null);
+  const [generationCount, setGenerationCount] = useState(0);
+  const [planDetails, setPlanDetails] = useState<{
+    planName: string;
+    generationLimit: number;
+    isActive: boolean;
+  } | null>(null);
 
   // Auth check and profile loading
   useEffect(() => {
@@ -69,12 +73,8 @@ function ProfilePage() {
           throw error;
         }
 
-        if (profile) {
-          if (active) {
-            setDisplayName(profile.full_name || "");
-            setAvatarUrl(profile.avatar_url);
-          }
-        } else {
+        let currentProfile = profile;
+        if (!profile) {
           // If no profile row exists, create one
           const defaultName =
             currentUser.user_metadata?.display_name ||
@@ -104,59 +104,37 @@ function ProfilePage() {
             }
             throw insertError;
           }
+          currentProfile = newProfile;
+        }
 
-          if (active && newProfile) {
-            setDisplayName(newProfile.full_name || "");
-            setAvatarUrl(newProfile.avatar_url);
+        if (active && currentProfile) {
+          setDisplayName(currentProfile.full_name || "");
+          setAvatarUrl(currentProfile.avatar_url);
+          setGenerationCount(currentProfile.generation_count || 0);
+        }
+
+        // Fetch plan details from Supabase using get_user_plan RPC
+        const { data: planData, error: planError } = await supabase
+          .rpc("get_user_plan", { uid: currentUser.id });
+
+        if (active) {
+          if (!planError && planData && planData.length > 0) {
+            const activePlan = planData[0];
+            setPlanDetails({
+              planName: activePlan.plan_name,
+              generationLimit: activePlan.generation_limit,
+              isActive: activePlan.is_active,
+            });
+          } else {
+            setPlanDetails({
+              planName: "free",
+              generationLimit: 3,
+              isActive: true,
+            });
           }
         }
 
-        // Get current auth session token
-        const { data: { session } } = await supabase.auth.getSession();
-        const token = session?.access_token;
-        let syncedSub = null;
 
-         if (token) {
-          try {
-            console.log("Syncing subscription from Polar API...");
-            const syncResult = await syncSubscription({ data: { token } });
-            if (syncResult && syncResult.subscription) {
-              syncedSub = syncResult.subscription;
-              if (active) setSubscription(syncedSub);
-            }
-          } catch (syncErr) {
-            console.error("Failed to sync subscription via server function:", syncErr);
-          }
-        }
-
-        // If not synced/found via server function, fall back to local database query
-        if (!syncedSub) {
-          const { data: subsData, error: subError, status: subStatus } = await supabase
-            .from("subscriptions")
-            .select("*")
-            .eq("user_id", currentUser.id);
-
-          if (subError) {
-            if (subStatus === 401) {
-              await supabase.auth.signOut();
-              if (active) {
-                toast.error("انتهت صلاحية الجلسة، يرجى تسجيل الدخول مرة أخرى");
-                navigate({ to: "/auth" });
-              }
-              return;
-            }
-            console.error("Error fetching subscriptions:", subError);
-          }
-
-          if (subsData && subsData.length > 0) {
-            const activeSub = subsData.find((s) => s.status === "active");
-            const selectedSub = activeSub || subsData.reduce((latest, current) => {
-              return new Date(current.updated_at) > new Date(latest.updated_at) ? current : latest;
-            }, subsData[0]);
-
-            if (active) setSubscription(selectedSub);
-          }
-        }
       } catch (err) {
         console.error("Error loading profile:", err);
         toast.error("حدث خطأ أثناء تحميل الملف الشخصي");
@@ -243,29 +221,13 @@ function ProfilePage() {
     }
   }
 
-  const getPlanName = () => {
-    const isCanceledButActive = subscription?.status === "canceled" && subscription?.current_period_end && new Date(subscription.current_period_end) > new Date();
-    const isActive = subscription?.status === "active";
-    
-    if (!subscription || (!isActive && !isCanceledButActive)) {
-      return "الخطة المجانية (FREE)";
+  const getPlanNameArabic = (name: string | undefined) => {
+    switch (name?.toLowerCase()) {
+      case "starter": return "الخطة الأساسية (Starter)";
+      case "pro": return "الخطة الاحترافية (Pro)";
+      case "ultra": return "الخطة الفائقة (Ultra)";
+      default: return "الخطة المجانية (Free)";
     }
-    
-    // Use product_name from Polar webhook if available
-    if (subscription.product_name) {
-      const name = subscription.product_name.toLowerCase();
-      if (name.includes("pro")) return "خطة Pro";
-      if (name.includes("starter") || name.includes("basic")) return "خطة Starter";
-      if (name.includes("ultra")) return "خطة Ultra";
-      return subscription.product_name;
-    }
-    
-    // Fallback: check product_id
-    const prodId = (subscription.product_id || "").toUpperCase();
-    if (prodId === "PRO" || prodId.includes("PRO")) return "خطة Pro";
-    if (prodId === "STARTER" || prodId.includes("STARTER") || prodId.includes("INFOGRAPHIC") || prodId.includes("BASIC")) return "خطة Starter";
-    if (prodId === "ULTRA" || prodId.includes("ULTRA")) return "خطة Ultra";
-    return "الخطة المدفوعة (Premium)";
   };
 
   const initials = displayName ? displayName.slice(0, 2).toUpperCase() : "U";
@@ -349,54 +311,24 @@ function ProfilePage() {
           <div className="rounded-2xl border border-border/60 bg-muted/20 p-5 space-y-4">
             <div className="flex justify-between items-center">
               <div className="flex items-center gap-2">
-                <div className="h-2 w-2 rounded-full bg-[var(--gold)] animate-pulse" />
+                <div className={`h-2 w-2 rounded-full ${planDetails?.isActive ? "bg-green-500" : "bg-[var(--gold)]"} animate-pulse`} />
                 <span className="text-sm font-bold text-foreground">الاشتراك الحالي</span>
               </div>
               <span className="text-xs font-semibold px-2 py-0.5 rounded bg-gold/10 text-[var(--gold)] border border-gold/20">
-                {getPlanName()}
+                {getPlanNameArabic(planDetails?.planName)}
               </span>
             </div>
 
-            {subscription && (subscription.status === "active" || (subscription.status === "canceled" && subscription.current_period_end && new Date(subscription.current_period_end) > new Date())) ? (
-              <div className="space-y-2 text-xs text-muted-foreground">
-                <div className="flex justify-between">
-                  <span>تاريخ انتهاء الفترة:</span>
-                  <span dir="ltr">
-                    {new Date(subscription.current_period_end).toLocaleDateString("ar-EG", {
-                      year: "numeric",
-                      month: "long",
-                      day: "numeric",
-                    })}
-                  </span>
-                </div>
-                {subscription.cancel_at_period_end && (
-                  <p className="text-[var(--gold)] text-[10px] font-medium">
-                    تم إلغاء التجديد التلقائي. سينتهي الاشتراك في التاريخ المحدد أعلاه.
-                  </p>
-                )}
-                <a 
-                  href="https://polar.sh/purchases" 
-                  target="_blank" 
-                  rel="noreferrer"
-                  className="mt-2 block text-center rounded-lg border border-border/80 hover:bg-accent/20 py-2 font-bold text-foreground transition-colors"
-                >
-                  إدارة الاشتراك عبر Polar
-                </a>
-              </div>
-            ) : (
-              <div className="space-y-2">
-                <p className="text-xs text-muted-foreground">
-                  أنت مشترك حالياً في الخطة المجانية. قم بالترقية للوصول إلى مميزات توليد لا نهائية وتصدير بجودة عالية.
+            <div className="space-y-2 text-xs text-muted-foreground">
+              <p>
+                عدد الإنفوجرافيكات المنجزة: {toArabic(generationCount)} من {planDetails?.generationLimit === 9999 || planDetails?.generationLimit === 99999 ? "غير محدود" : toArabic(planDetails?.generationLimit || 3)}
+              </p>
+              {planDetails?.planName !== "free" && (
+                <p>
+                  حالة الاشتراك: {planDetails?.isActive ? "نشط" : "غير نشط / منتهي"}
                 </p>
-                <Link 
-                  to="/" 
-                  hash="pricing"
-                  className="block text-center rounded-lg bg-[var(--gold)] hover:bg-[var(--gold-light)] text-background py-2 text-xs font-bold transition-colors"
-                >
-                  ترقية الاشتراك الآن
-                </Link>
-              </div>
-            )}
+              )}
+            </div>
           </div>
 
           {/* Form */}

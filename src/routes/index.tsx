@@ -79,16 +79,7 @@ const item: Variants = {
 function Landing() {
   const typed = useTypewriter();
 
-  useEffect(() => {
-    if (typeof window !== "undefined") {
-      const searchParams = new URLSearchParams(window.location.search);
-      if (searchParams.get("checkout_id")) {
-        toast.success("تمت عملية الاشتراك بنجاح! شكراً لانضمامك إلى Olifen.", { duration: 5000 });
-        // Remove checkout_id from URL to prevent showing toast again on refresh
-        window.history.replaceState({}, document.title, window.location.pathname);
-      }
-    }
-  }, []);
+
 
   return (
     <main className="bg-background text-foreground">

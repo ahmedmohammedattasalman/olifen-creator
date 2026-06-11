@@ -7,7 +7,6 @@ import { toast } from "sonner";
 import { MagneticButton } from "./MagneticButton";
 import { toArabic } from "@/lib/arabic-numerals";
 import { supabase } from "@/integrations/supabase/client";
-import { getCheckoutUrl } from "@/config/pricing";
 
 export interface Plan {
   name: string;
@@ -36,43 +35,65 @@ export function PricingCard({ plan, yearly }: { plan: Plan; yearly: boolean }) {
   const price = yearly ? plan.price.yearly : plan.price.monthly;
 
   const handleCheckout = async () => {
-    if (plan.name.toUpperCase() === "FREE") {
-      navigate({ to: "/generate" });
-      return;
-    }
-
     try {
       const { data: { session } } = await supabase.auth.getSession();
       if (!session) {
-        toast.info("يرجى تسجيل الدخول أولاً للمتابعة للاشتراك");
+        toast.info("يرجى تسجيل الدخول أولاً للمتابعة");
         navigate({ to: "/auth" });
         return;
       }
 
-      const checkoutUrl = getCheckoutUrl(plan.name, yearly);
-      if (checkoutUrl) {
-        const url = new URL(checkoutUrl);
-        url.searchParams.set("customerEmail", session.user.email || "");
-        url.searchParams.set("customerExternalId", session.user.id);
-        
-        try {
-          // Dynamically import @polar-sh/checkout/embed to prevent SSR errors
-          const { PolarEmbedCheckout } = await import("@polar-sh/checkout/embed");
-          const checkout = await PolarEmbedCheckout.create(url.toString());
-          
-          checkout.addEventListener("success", () => {
-            // After successful payment, redirect to profile to show updated plan
-            navigate({ to: "/profile" });
-          });
-        } catch (embedErr) {
-          console.error("Failed to open embedded checkout, falling back to redirect:", embedErr);
-          window.location.assign(url.toString());
-        }
-      } else {
-        toast.error("عذراً، لم يتم العثور على رابط الدفع لهذه الخطة");
+      if (plan.name.toUpperCase() === "FREE") {
+        navigate({ to: "/generate" });
+        return;
       }
-    } catch (err) {
-      toast.error("حدث خطأ أثناء الانتقال لصفحة الدفع");
+
+      // Determine price ID from env based on plan name and yearly toggle
+      let priceId = "";
+      const planNameUpper = plan.name.toUpperCase();
+
+      if (planNameUpper === "STARTER") {
+        priceId = yearly
+          ? (import.meta.env.VITE_PADDLE_STARTER_YEARLY_PRICE_ID as string)
+          : (import.meta.env.VITE_PADDLE_STARTER_MONTHLY_PRICE_ID as string);
+      } else if (planNameUpper === "PRO") {
+        priceId = yearly
+          ? (import.meta.env.VITE_PADDLE_PRO_YEARLY_PRICE_ID as string)
+          : (import.meta.env.VITE_PADDLE_PRO_MONTHLY_PRICE_ID as string);
+      } else if (planNameUpper === "ULTRA") {
+        priceId = yearly
+          ? (import.meta.env.VITE_PADDLE_ULTRA_YEARLY_PRICE_ID as string)
+          : (import.meta.env.VITE_PADDLE_ULTRA_MONTHLY_PRICE_ID as string);
+      }
+
+      if (!priceId) {
+        toast.error("لم يتم تهيئة معرّف السعر لهذه الخطة بعد. الرجاء المحاولة لاحقاً.");
+        return;
+      }
+
+      const { getPaddle } = await import("@/lib/paddle-client");
+      const paddle = await getPaddle();
+      if (!paddle) {
+        toast.error("فشل تحميل بوابة الدفع Paddle. الرجاء تحديث الصفحة.");
+        return;
+      }
+
+      paddle.Checkout.open({
+        items: [{ priceId, quantity: 1 }],
+        customData: {
+          userId: session.user.id,
+          planName: plan.name.toLowerCase(),
+        },
+        customer: session.user.email ? { email: session.user.email } : undefined,
+        settings: {
+          displayMode: "overlay",
+          theme: "dark",
+        },
+      });
+
+    } catch (err: any) {
+      console.error("Error launching Paddle checkout:", err);
+      toast.error("حدث خطأ أثناء الانتقال لبوابة الدفع");
     }
   };
 
